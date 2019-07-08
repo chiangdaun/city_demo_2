@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='bootstrap/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='fontawesome/css/font-awesome.css') }}">
+</head>
+<body>
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <div class="panel panel-default">
+            <div class="panel panel-heading">
+                <h3 class="panel-title glyphicon glyphicon-leaf">
+                    选择院系
+                </h3>
+            </div>
+            <form action="" method="post">
+                <div class="panel panel-body">
+                    <div class="form-group">
+                        {{ form.school.label }}
+                        {{ form.school }}
+                        {% for error in form.school.errors -%}
+                            <small class="error"
+                                   style="color: red">{{ error }}</small><br>
+                        {%- endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.department.label }}
+                        {{ form.department }}
+                        {% for error in form.department.errors -%}
+                            <small class="error"
+                                   style="color: red">{{ error }}</small><br>
+                        {%- endfor %}
+                    </div>
+                </div>
+                <div class="panel panel-footer">
+                    {{ form.csrf_token }}
+                    {{ form.submit }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static',filename='jquery-3.3.1.js') }}"></script>
+<script>
+    $(document).ready(function () {
+            $('#school').change(function () {
+                $('#department').html('');
+                var selected_id = $('#school option:selected').val();
+                $.ajax({
+                    url: '/select_school/',
+                    type: 'GET',
+                    data: {'selected_id': JSON.stringify(selected_id)},
+                    success: function (data) {
+                        if (data) {
+                            $("<option vlaue='0'>-请选择-</option>").appendTo("#department");
+                            for (i = 0; i < data.length; i++) {
+                                $("<option value='" + data[i][0] + "'>" + data[i][1] + "</option>").appendTo("#department");
+                            }
+                        } else {
+                            alert('error');
+                        }
+                    }
+                })
+            })
+        }
+    )
+</script>
+</body>
+</html>
